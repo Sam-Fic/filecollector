@@ -64,6 +64,12 @@ public class FileCollectorApp : Adw.Application {
             if (quit_action != null) {
                 ((GLib.SimpleAction) quit_action).activate.connect (() => window.close ());
             }
+
+            // 通知默认动作: 点击 "AI 任务完成" 通知时把窗口带回前台
+            var present_action = lookup_action ("present");
+            if (present_action != null) {
+                ((GLib.SimpleAction) present_action).activate.connect (() => window.present ());
+            }
         }
 
         window.present ();
@@ -191,6 +197,7 @@ public class FileCollectorApp : Adw.Application {
         add_action (new GLib.SimpleAction ("clear_cache", null));
         add_action (new GLib.SimpleAction ("shortcuts", null));
         add_action (new GLib.SimpleAction ("quit", null));
+        add_action (new GLib.SimpleAction ("present", null));
 
         set_accels_for_action ("app.open_project", {"<Control>o"});
         set_accels_for_action ("app.save_project", {"<Control>s"});

@@ -65,6 +65,9 @@ public class AIPanel : GLib.Object {
     public signal int get_undo_token ();
     public signal void revert_to_undo_token (int token);
     public signal void template_triggered (string header, string footer);
+    // agent 循环正常结束 (最终回复不含工具调用) 时触发;
+    // summary 是最终回复的首行单行摘要 (可能为空串), 供任务完成通知使用
+    public signal void task_completed (string summary);
 
     private GLib.Thread<void>? worker_thread = null;
     private bool busy = false;
@@ -1189,8 +1192,27 @@ public class AIPanel : GLib.Object {
                 set_busy (false);
             }
         } else {
+            // 没有后续工具调用 = agent 循环结束, 任务彻底完成
+            task_completed (summarize_for_notification (result.content));
             set_busy (false);
         }
+    }
+
+    // 完成通知摘要: 取回复第一段非空文本, 折叠为单行并按字符数截断
+    // (index_of_nth_char 按 UTF-8 字符定位, 不会切断多字节字符);
+    // 全空回复返回空串, 由通知侧回退到通用文案
+    private static string summarize_for_notification (string? content) {
+        string text = content ?? "";
+        foreach (string raw_line in text.split ("\n")) {
+            string line = raw_line.strip ();
+            if (line.length == 0) continue;
+            long cut = line.index_of_nth_char (80);
+            if (cut >= 0) {
+                line = line.substring (0, cut) + "…";
+            }
+            return line;
+        }
+        return "";
     }
 
     // 异步工具执行: 若已在主线程则直接调用 tool_executor;

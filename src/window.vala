@@ -5149,12 +5149,34 @@ public class FileCollectorWindow : Adw.ApplicationWindow {
                 }
                 refresh_list ();
             });
+            ai_panel_instance.task_completed.connect (on_ai_task_completed);
         }
         // 重新应用当前设置
         apply_ai_settings_to_panel ();
 
         // 侧栏显隐完全由 show-sidebar 属性驱动; 并排/覆盖与窗口最小宽由
         // update_sidebars_layout 按当前宽度动态维护, 无需在此处理窗口尺寸.
+    }
+
+    // AI 任务完成通知: 仅窗口不在前台时提醒 (HIG: 不打扰正在查看应用的用户),
+    // 点击通知经 app.present 动作回到窗口。图标用单色应用符号图标
+    // (通知/托盘等单色场景专用), 未安装到系统图标主题的环境回退到全彩应用图标。
+    private void on_ai_task_completed (string summary) {
+        if (is_active) return;
+        var app = get_application ();
+        if (app == null) return;
+
+        string body = summary.strip ();
+        if (body.length == 0) {
+            body = _("Open the AI sidebar to view the full reply.");
+        }
+        var notification = new GLib.Notification (_("AI task completed"));
+        notification.set_body (body);
+        notification.set_icon (new GLib.ThemedIcon.from_names ({
+            "io.github.sam_fic.filecollector-symbolic",
+            "io.github.sam_fic.filecollector"}));
+        notification.set_default_action ("app.present");
+        app.send_notification ("ai-task-completed", notification);
     }
 
     private void apply_ai_settings_to_panel () {

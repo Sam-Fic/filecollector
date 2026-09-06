@@ -1904,6 +1904,14 @@ msgstr "未配置"
 msgid "Ready"
 msgstr "就绪"
 
+#: src/window.vala:5175
+msgid "AI task completed"
+msgstr "AI 任务已完成"
+
+#: src/window.vala:5180
+msgid "Open the AI sidebar to view the full reply."
+msgstr "打开 AI 侧边栏查看完整回复。"
+
 #: src/widgets/context_menus.vala:122
 #, c-format
 msgid "Retry AI Conversion (%d items)"
