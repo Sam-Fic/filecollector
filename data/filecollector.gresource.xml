@@ -11,5 +11,6 @@
          保证未安装到系统 (直接从 builddir 运行) 时也能加载。 -->
     <file alias="icons/hicolor/scalable/actions/xsi-git-symbolic.svg" preprocess="xml-stripblanks">icons/hicolor/scalable/actions/xsi-git-symbolic.svg</file>
     <file alias="icons/hicolor/scalable/actions/xsi-text-case-symbolic.svg" preprocess="xml-stripblanks">icons/hicolor/scalable/actions/xsi-text-case-symbolic.svg</file>
+    <file alias="icons/hicolor/scalable/apps/io.github.sam_fic.filecollector-symbolic.svg" preprocess="xml-stripblanks">icons/hicolor/scalable/apps/io.github.sam_fic.filecollector-symbolic.svg</file>
   </gresource>
 </gresources>
